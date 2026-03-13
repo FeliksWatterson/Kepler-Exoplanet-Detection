@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn.impute import SimpleImputer
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
@@ -13,8 +12,4 @@ def load_data(filepath):
     X_raw = df[features]
     y = df['label']
 
-    # Xử lý missing data bằng Median thay vì số 0
-    imputer = SimpleImputer(strategy='median')
-    X_imputed = imputer.fit_transform(X_raw)
-    
-    return X_imputed, y, features, df
+    return X_raw, y, features, df

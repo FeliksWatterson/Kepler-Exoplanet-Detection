@@ -1,8 +1,8 @@
+import os
+import joblib
 import numpy as np
 import pandas as pd
 from modules.data_loader import load_data
-from modules.trainer import run_models
-from sklearn.model_selection import train_test_split
 
 # Config
 DATA_FILE = 'dataset/cumulative.csv'
@@ -29,31 +29,34 @@ def print_result(sample_data, prediction, actual, proba):
     print("-" * 60)
 
 if __name__ == "__main__":
-    # 1. Setup
-    print("Initializing System & Loading Models...")
-    X, y, feats, df, scaler = load_data(DATA_FILE)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    _, model = run_models(X_train, X_test, y_train, y_test, OUT_DIR)
+    print("[INFO] Initializing Inference Engine...")
+    if not os.path.exists(os.path.join(OUT_DIR, 'best_model.pkl')):
+        print("[ERROR] Model artifacts not found! Vui lòng chạy 'python main.py' trước để train và xuất model.")
+        exit(1)
+    print("[INFO] Loading pre-trained artifacts (.pkl)...")
+    imputer = joblib.load(os.path.join(OUT_DIR, 'imputer.pkl'))
+    scaler = joblib.load(os.path.join(OUT_DIR, 'scaler.pkl'))
+    model = joblib.load(os.path.join(OUT_DIR, 'best_model.pkl'))
 
-    # 2. Pick random samples for testing
-    print("\nPicking random targets...\n")
+    print("[INFO] Loading dataset for sampling...")
+    X_raw, y, feats, df = load_data(DATA_FILE)
+
+    print("\n[SIMULATION STARTED] Scanning for random targets...\n")
     
-    # Pick 5 random indices from Test set
-    random_indices = np.random.choice(len(X_test), 5, replace=False)
+    random_indices = np.random.choice(len(X_raw), 5, replace=False)
     
     for i in random_indices:
-        original_idx = y_test.index[i]
+        original_idx = y.index[i]
         raw_sample = df.loc[original_idx, feats].values
+        actual_label = y.iloc[i]
         
-        # Get processed data for model
-        input_vector = X_test[i].reshape(1, -1)
-        actual_label = y_test.iloc[i]
+        input_vector = raw_sample.reshape(1, -1)
+        input_imputed = imputer.transform(input_vector)
+        input_scaled = scaler.transform(input_imputed)
         
-        # Predict
-        pred_label = model.predict(input_vector)[0]
-        pred_prob = model.predict_proba(input_vector)[0][pred_label] * 100
+        pred_label = model.predict(input_scaled)[0]
+        pred_prob = model.predict_proba(input_scaled)[0][pred_label] * 100
         
-        # Show result
         print_result(raw_sample, pred_label, actual_label, pred_prob)
         
         input("Press Enter to scan next target...")
