@@ -23,13 +23,22 @@ def plot_acc(results, out_dir):
     plt.close()
 
 def plot_features(model, names, out_dir):
-    imp = model.feature_importances_
+    # Lấy trọng số đặc trưng tùy theo loại kiến trúc thuật toán
+    if hasattr(model, 'feature_importances_'):
+        imp = model.feature_importances_
+    elif hasattr(model, 'coef_'):
+        imp = np.abs(model.coef_[0]) # Lấy giá trị tuyệt đối của trọng số
+    else:
+        print("[WARNING] Model does not support feature importance visualization.")
+        return
+
     idx = np.argsort(imp)[::-1]
 
     plt.figure(figsize=(10, 6))
     sns.barplot(x=imp[idx], y=np.array(names)[idx], palette='magma')
-    plt.title('Feature Importance')
-    plt.savefig(os.path.join(out_dir, 'feat_imp.png'))
+    plt.title('Feature Importance Analysis')
+    plt.xlabel('Relative Importance / Absolute Coefficient')
+    plt.savefig(os.path.join(out_dir, 'feat_imp.png'), dpi=300)
     plt.close()
 
 def plot_cm(model, X_test, y_test, out_dir):
@@ -44,3 +53,4 @@ def plot_cm(model, X_test, y_test, out_dir):
     plt.xlabel('Pred')
     plt.savefig(os.path.join(out_dir, 'confusion_matrix.png'))
     plt.close()
+

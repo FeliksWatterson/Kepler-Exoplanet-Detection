@@ -9,24 +9,24 @@ DATA_FILE = 'dataset/cumulative.csv'
 OUT_DIR = 'outputs'
 
 def print_result(sample_data, prediction, actual, proba):
-    print("-" * 50)
-    print(f"INPUT SIGNAL:")
-    print(f" - Period: {sample_data[0]:.2f} days") 
-    print(f" - Radius: {sample_data[5]:.2f} R_earth") 
-    print(f" - Depth : {sample_data[4]:.2f} ppm") 
-    print(f" - Temp  : {sample_data[6]:.2f} K")
+    print("-" * 60)
+    print(f"[INFERENCE] Analyzing Kepler Object of Interest...")
+    print(f"  |- Orbital Period : {sample_data[0]:.4f} days")
+    print(f"  |- Transit Depth  : {sample_data[4]:.4f} ppm")
+    print(f"  |- Planetary Rad  : {sample_data[5]:.4f} Earth radii")
+    print(f"  |- Equil. Temp    : {sample_data[6]:.2f} K")
     
-    pred_text = "CONFIRMED PLANET" if prediction == 1 else "FALSE POSITIVE"
-    act_text = "CONFIRMED PLANET" if actual == 1 else "FALSE POSITIVE"
+    pred_text = "CONFIRMED" if prediction == 1 else "FALSE POSITIVE"
+    act_text = "CONFIRMED" if actual == 1 else "FALSE POSITIVE"
     
-    print(f"\nModel Prediction : [{pred_text}] ({proba:.1f}%)")
-    print(f"Actual Truth : [{act_text}]")
+    print(f"\n[OUTPUT] Model Prediction : {pred_text} (Confidence: {proba/100:.4f})")
+    print(f"[GROUND TRUTH] Actual     : {act_text}")
     
     if prediction == actual:
-        print("Verdict: Correct")
+        print("[EVALUATION] Status: Correct Match")
     else:
-        print("Verdict: Incorrect")
-    print("-" * 50)
+        print("[EVALUATION] Status: Misclassification")
+    print("-" * 60)
 
 if __name__ == "__main__":
     # 1. Setup
