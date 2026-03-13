@@ -11,9 +11,9 @@ OUT_DIR = 'outputs'
 def print_result(sample_data, prediction, actual, proba):
     print("-" * 50)
     print(f"INPUT SIGNAL:")
-    print(f" - Period: {sample_data[0]:.2f} days")
-    print(f" - Radius: {sample_data[5]:.2f} R_earth")
-    print(f" - Depth : {sample_data[4]:.2f} ppm")
+    print(f" - Period: {sample_data[0]:.2f} days") 
+    print(f" - Radius: {sample_data[5]:.2f} R_earth") 
+    print(f" - Depth : {sample_data[4]:.2f} ppm") 
     print(f" - Temp  : {sample_data[6]:.2f} K")
     
     pred_text = "CONFIRMED PLANET" if prediction == 1 else "FALSE POSITIVE"
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     _, model = run_models(X_train, X_test, y_train, y_test, OUT_DIR)
 
     # 2. Pick random samples for testing
-    print("\n[SIMULATION STARTED] Scanning for random targets...\n")
+    print("\nPicking random targets...\n")
     
     # Pick 5 random indices from Test set
     random_indices = np.random.choice(len(X_test), 5, replace=False)

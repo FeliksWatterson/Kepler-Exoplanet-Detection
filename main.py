@@ -12,7 +12,7 @@ if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
 if __name__ == "__main__":
-    # 1. Load
+    # 1. Load                              
     print("Loading data...")
     X, y, feats, df, scaler = load_data(DATA_FILE) 
 
