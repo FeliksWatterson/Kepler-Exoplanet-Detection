@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer 
 from modules.data_loader import load_data
 from modules.trainer import run_models
-from modules.visualizer import plot_corr, plot_acc, plot_features, plot_cm
+from modules.visualizer import plot_corr, plot_acc, plot_features, plot_cm, plot_target_dist, plot_feature_dist, plot_boxplots, plot_missing_values
 
 DATA_FILE = 'dataset/cumulative.csv'
 OUT_DIR = 'outputs'
@@ -14,8 +14,13 @@ os.makedirs(OUT_DIR, exist_ok=True)
 if __name__ == "__main__":
     print("[INFO] Loading raw data...")
     X_raw, y, feats, df = load_data(DATA_FILE) 
-
+    print("[INFO] Executing Exploratory Data Analysis (EDA)...")
     plot_corr(df, feats, OUT_DIR)
+    plot_target_dist(df, OUT_DIR)
+    plot_feature_dist(df, feats, OUT_DIR)
+    plot_boxplots(df, feats, OUT_DIR)
+    plot_missing_values(df, feats, OUT_DIR)
+    print("       -> EDA plots saved to 'outputs/' directory.")
 
     # 1. Chia Train/Test 
     X_train_raw, X_test_raw, y_train, y_test = train_test_split(X_raw, y, test_size=0.2, stratify=y, random_state=42)

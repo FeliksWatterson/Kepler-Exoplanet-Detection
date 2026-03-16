@@ -3,6 +3,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from modules.data_loader import load_data
+from sklearn.model_selection import train_test_split
 
 # Config
 DATA_FILE = 'dataset/cumulative.csv'
@@ -40,15 +41,15 @@ if __name__ == "__main__":
 
     print("[INFO] Loading dataset for sampling...")
     X_raw, y, feats, df = load_data(DATA_FILE)
-
-    print("\n[SIMULATION STARTED] Scanning for random targets...\n")
+    _, X_test_raw, _, y_test = train_test_split(X_raw, y, test_size=0.2, stratify=y, random_state=42)
+    print("\n[SIMULATION STARTED] Scanning for random targets (UNSEEN DATA ONLY)...\n")
     
-    random_indices = np.random.choice(len(X_raw), 5, replace=False)
+    # Chọn ngẫu nhiên các index nằm trong tập test
+    random_indices = np.random.choice(len(X_test_raw), 5, replace=False)
     
     for i in random_indices:
-        original_idx = y.index[i]
-        raw_sample = df.loc[original_idx, feats].values
-        actual_label = y.iloc[i]
+        raw_sample = X_test_raw.iloc[i].values
+        actual_label = y_test.iloc[i]
         
         input_vector = raw_sample.reshape(1, -1)
         input_imputed = imputer.transform(input_vector)
